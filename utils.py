@@ -52,6 +52,7 @@ def train_for_classification(net, train_loader, test_loader, optimizer,
       X, Y = X.to(device), Y.to(device)
 
       # x.shape = [B, 3, 32, 32]
+      batch_size = X.shape[0]
 
       # Limpiamos los gradientes, pasamos el input por la red, calculamos
       # la loss, ejecutamos el backpropagation (.backward) 
@@ -98,7 +99,7 @@ def train_for_classification(net, train_loader, test_loader, optimizer,
         Y_logits_2 = out_dict_2['logits']
         _, max_idx_2 = torch.max(Y_logits_2, dim=1)
         A = max_idx_2 == Y
-        K = torch.arange(32, dtype=torch.int8)
+        K = torch.arange(batch_size, dtype=torch.int8)
         K.to(device)
         aux_list = K[A].tolist()
         indices_clasificacion_incorrecta += aux_list
