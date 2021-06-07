@@ -122,6 +122,9 @@ def train_for_classification(net, train_loader, test_loader, optimizer,
 
             aux_list = K[entropy_ok_eval_ok].tolist() # Nuevas MEPIs
 
+            # Actualizar valores de entropía
+            valores_de_entropia = [b_e if m_e else a_e for a_e,b_e,m_e in zip(valores_de_entropia,valores_de_entropia_nuevos,entropy_ok_eval_ok)]
+
             # Tensor índices
             # List to cuda
             tensor_indices_nuevas_mepis = torch.LongTensor(aux_list).to(device)
