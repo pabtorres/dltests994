@@ -5,7 +5,11 @@ import torch
 from torch.utils.data import Dataset
 import numpy as np
 
+import torchvision.io
+
 from reductions import downsampling
+
+from torchvision import transforms
 
 import itertools
 
@@ -25,6 +29,17 @@ class ImageCaptionDataset(Dataset):
     pos_enc = self.cap_encodings[i][0]
 
     return anchor, pos_enc
+
+inv_trans = transforms.Compose([ transforms.Normalize(mean = [ 0., 0., 0. ],
+                                                     std = [ 1/0.229, 1/0.224, 1/0.225 ]),
+                                transforms.Normalize(mean = [ -0.485, -0.456, -0.406 ],
+                                                     std = [ 1., 1., 1. ]),
+                                lambda x: x*255
+                               ])
+def get_entropy(input_tensor):
+  k = inv_trans(input_tensor)
+  a = torchvision.io.encode_png(k.type(torch.uint8)) 
+  return sys.getsizeof(a.storage())
 
 
 def train_for_classification(net, train_loader, test_loader, optimizer, 
@@ -92,6 +107,9 @@ def train_for_classification(net, train_loader, test_loader, optimizer,
       computo = 28
       copy_x = torch.clone(X)
       copy_x.to(device)
+
+      import pdb
+      pdb.set_trace()
 
       # Obtener entropía de las fotos base
       valores_de_entropia = [get_entropy(t) for t in copy_x]
