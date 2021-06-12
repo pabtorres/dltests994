@@ -132,7 +132,7 @@ def train_for_classification(net, train_loader, test_loader, optimizer,
 
               ##valores_de_entropia_nuevos = [get_entropy(t.to('cpu')) for t in copy_x]
 
-              comparation_entropy = [a>=b for (a,b) in zip(valores_de_entropia,valores_de_entropia_nuevos)]
+              ##comparation_entropy = [a>=b for (a,b) in zip(valores_de_entropia,valores_de_entropia_nuevos)]
 
               out_dict_2 = net(X) # cambiar red neural modo .eval() # SE APLICAN SOBRE FOTOS ORIGINALES (X)
 
@@ -187,6 +187,16 @@ def train_for_classification(net, train_loader, test_loader, optimizer,
         
         loss.backward()
         optimizer.step()
+
+        # loss
+        items = min(total_train, (i+1) * train_loader.batch_size)
+        running_loss += loss.item()
+        avg_loss = running_loss/(i+1)
+        
+        # accuracy
+        _, max_idx = torch.max(Y_logits, dim=1)
+        running_acc += torch.sum(max_idx == Y).item()
+        avg_acc = running_acc/items*100
 
 
 
